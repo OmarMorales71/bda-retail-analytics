@@ -79,7 +79,19 @@
 %  - Breve contexto del negocio (tienda online de regalos) y por qué el
 %    problema es relevante.
 % =====================================================================
-\placeholder{Who will use the results and for what decision.}
+The company is a UK-based online retailer selling all-occasion giftware, and many of its customers are
+wholesalers who reorder regularly. Revenue is likely concentrated in a small share of these customers, but
+today the company does not know who they are, which of them are drifting away, or which products they tend
+to buy together. Marketing budget is therefore spread evenly, and promotions are chosen by intuition.
+
+The results will be used by the CRM and marketing manager for three decisions taken each quarter:
+\begin{itemize}
+  \item \textbf{Who to target:} which customer segments get retention or loyalty actions (e.g.\ win back
+        valuable customers who have stopped buying) and which need no extra spending.
+  \item \textbf{How much to invest per customer:} how to split next quarter's marketing budget according to
+        each customer's \emph{predicted} spending, instead of past spending only.
+  \item \textbf{What to offer:} which product pairs to bundle or cross-sell in campaigns and on the website.
+\end{itemize}
 
 % =====================================================================
 \section{Analysis, prediction and KPIs}
@@ -92,7 +104,42 @@
 %    (lo que pide el proyecto 7), con su baseline.
 %  - Los KPIs (mínimo 3 según la guía), cada uno con una definición clara.
 % =====================================================================
-\placeholder{What you will analyze, what you will predict, and the KPIs.}
+%  Decisiones del usuario: "why?" = churn de clientes valiosos; predicción =
+%  regresión con split estacional (sep--dic 2010 / sep--dic 2011); 5 KPIs
+%  (los 4 recomendados + tasa de cancelación).
+\textbf{What we will analyze.}
+\begin{enumerate}
+  \item \textbf{Who are the best customers?} For each customer we compute Recency, Frequency and Monetary
+        value (RFM) with Spark, score each dimension in quintiles and group customers into segments such
+        as \emph{Champions}, \emph{Loyal}, \emph{At risk} and \emph{Lost}.
+  \item \textbf{Which products are bought together?} Each invoice is a basket; we compute association rules
+        (support, confidence, lift) with Spark and keep product pairs with high lift and enough support.
+  \item \textbf{Why do valuable customers stop buying?} (our ``why?'' question) We take customers in the
+        top 20\% by spend in a period and compare those who churned (no purchase in the next 90 days) with
+        those who stayed: trend in order frequency and basket size, product mix, cancellation share and country.
+\end{enumerate}
+
+\textbf{What we will predict.} Each customer's total spend in the \emph{next quarter} (3 months; 0 if they do
+not buy). Features use only data before a cutoff date (previous 9 months): RFM, number of orders and distinct
+products, recent trend, cancellation share and country. The model is a Spark ML gradient-boosted trees
+regressor. To follow time and the holiday season, we train with cutoff 9 Sep 2010 (target: spend until
+9 Dec 2010) and test with cutoff 9 Sep 2011 (target: the last quarter of the data). The \textbf{baseline}
+predicts that each customer spends the same as in the previous quarter; both are compared with MAE and RMSE.
+
+\textbf{KPIs.} Net revenue $=$ Quantity $\times$ Price, after removing cancelled invoices; customer KPIs use
+only rows with a Customer ID.
+
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+  \toprule
+  \textbf{KPI} & \textbf{Definition} & \textbf{Decision} \\
+  \midrule
+  Revenue concentration & Share of net revenue from the top 20\% of customers & Who to target \\
+  Repeat-purchase rate  & Share of customers active in a quarter who buy again in the next quarter & Who to target \\
+  Average order value   & Net revenue / number of invoices, by segment and month & How much to invest \\
+  Cancellation rate     & Share of gross revenue on cancelled invoices (Invoice starting with ``C'') & Who to target \\
+  Basket lift           & Lift of the top product pairs: $P(A \cap B) / (P(A)\,P(B))$ & What to offer \\
+  \bottomrule
+\end{tabularx}
 
 % =====================================================================
 \section{Data and platform}
