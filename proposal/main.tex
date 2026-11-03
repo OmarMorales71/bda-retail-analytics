@@ -152,10 +152,10 @@ only rows with a Customer ID.
 % =====================================================================
 We will use the \textbf{Online Retail II} dataset from the UCI Machine Learning Repository.
 \begin{itemize}
-  \item \textbf{Size and real data:} 1,067,371 rows of real transaction data (2009--2011), fulfilling the minimum requirement of 1 million rows.
+  \item \textbf{Size and real data:} 1,067,371 rows of real transactions (2009--2011), above the minimum of 1 million rows.
   \item \textbf{License:} Creative Commons Attribution 4.0 International (CC BY 4.0).
   \item \textbf{Link:} \url{https://archive.ics.uci.edu/dataset/502/online+retail+ii}
-  \item \textbf{Platform:} The pipeline (data cleaning, Parquet storage, and Spark analysis) will be developed and executed in \textbf{Google Colab} using PySpark.
+  \item \textbf{Platform:} We will build and run the pipeline (data cleaning, Parquet storage and Spark analysis) in \textbf{Google Colab} with PySpark.
 \end{itemize}
 
 % =====================================================================
@@ -166,14 +166,14 @@ We will use the \textbf{Online Retail II} dataset from the UCI Machine Learning 
 %    plan para llevarla a cabo, incluyendo cómo se comparará con un baseline.
 %  - Los riesgos principales del proyecto y cómo se mitigarán.
 % =====================================================================
-\textbf{Advanced Option (A $\cdot$ Machine Learning):} We will train a Spark ML gradient-boosted trees regressor to predict each customer's total spend for the next quarter. The model will be evaluated using MAE and RMSE metrics.
+\textbf{Advanced option (A $\cdot$ machine learning):} We will train a Spark ML gradient-boosted trees regressor to predict each customer's total spend for the next quarter. We will evaluate it with MAE and RMSE.
 \begin{itemize}
-  \item \textbf{Baseline:} A simple model predicting that each customer will spend the exact same amount next quarter as they did in the previous quarter.
+  \item \textbf{Baseline:} Each customer spends the same next quarter as in the previous quarter.
   \item \textbf{Main risks and mitigation:}
   \begin{itemize}
-    \item \emph{Data leakage:} Accidentally predicting the past using future data. We will avoid this by strictly adhering to a time-based train/test split (September cutoffs).
-    \item \emph{Skewed spending:} A few massive wholesale buyers could skew the model's predictions. We will mitigate this by evaluating with MAE (which is less sensitive to outliers) and testing a log-transformation on the target spending variable.
-    \item \emph{Missing Customer Identifiers:} Over 240,000 rows lack a Customer ID (e.g., guest checkouts) and cannot be used for the customer-level ML model or RFM segmentation. We will mitigate this by filtering these out early and verifying that the remaining 820,000+ identifiable rows are still sufficient to train the gradient-boosted trees effectively.
+    \item \emph{Data leakage:} Using information from after the cutoff date to build the features. We will avoid this with a strict time-based train/test split (September cutoffs).
+    \item \emph{Skewed spending:} A few very large wholesale buyers can skew the predictions. We will use MAE (less sensitive to outliers) and test a log transformation of the target.
+    \item \emph{Missing Customer ID:} Over 240,000 rows lack a Customer ID (e.g.\ guest checkouts) and cannot be used for the customer-level ML model or RFM segmentation. We will mitigate this by filtering these out early and verifying that the remaining 820,000+ identifiable rows are still sufficient to train the gradient-boosted trees effectively.
   \end{itemize}
 \end{itemize}
 
@@ -185,9 +185,9 @@ We will use the \textbf{Online Retail II} dataset from the UCI Machine Learning 
 %  - Quién lidera cada parte del proyecto.
 %  - Dejar claro que ambos miembros programan.
 % =====================================================================
-Both partners will write, execute, and be able to explain the code for this project. The lead responsibilities are distributed as follows to ensure a balanced workload:
+Both partners will write, run and be able to explain all the code. Each partner leads these parts:
 \begin{itemize}
-  \item \textbf{Omar Morales Ortega:} Leads data ingestion, Parquet partitioning, the data-quality log, and the association rules analysis (product baskets).
-  \item \textbf{Xavier Servin:} Leads the RFM segmentation, the "why?" question investigation, and the Machine Learning prediction pipeline (Advanced Option).
+  \item \textbf{Omar Morales Ortega:} Leads data ingestion, Parquet partitioning, the data-quality log and the association rules analysis (product baskets).
+  \item \textbf{Xavier Servin:} Leads the RFM segmentation, the ``why?'' question and the machine learning prediction pipeline (advanced option).
 \end{itemize}
 \end{document}
